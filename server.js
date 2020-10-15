@@ -2,6 +2,16 @@ const express = require("express");
 
 const app = express();
 
+const db = require("./spatial_queries/combinedQueries");
+
+// For parsing application/json
+app.use(express.json());
+
+// For parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+app.post("/user/register", db.userRegister);
+
 app.get("/test", (req, res) => {
   const developers = [
     { id: 1, name: "Bhargavi Sandur", age: 20 },

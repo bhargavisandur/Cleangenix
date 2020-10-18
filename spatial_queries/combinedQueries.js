@@ -1,5 +1,5 @@
-const userQueries = require("./userQueries");
+const adminQueries = require("./adminQueries");
 
 module.exports = {
-  userRegister: userQueries.userRegister,
+  userRegister: adminQueries.userRegister,
 };

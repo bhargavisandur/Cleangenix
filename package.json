@@ -22,9 +22,13 @@
   },
   "homepage": "https://github.com/bhargavisandur/Cleangenix#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "concurrently": "^5.3.0",
+    "connect-flash": "^0.1.1",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "flash-express": "^1.0.4",
     "pg": "^8.4.1",
     "request": "^2.88.2",
     "views": "^1.0.2"

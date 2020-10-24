@@ -3,6 +3,10 @@ const path = require("path");
 const app = express();
 const ejs = require("ejs");
 const db = require("./spatial_queries/combinedQueries");
+const bcrypt = require('bcrypt');
+
+
+
 
 // For parsing application/json
 app.use(express.json());
@@ -15,7 +19,25 @@ app.use(express.static("public"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+app.get('/', (req, res) => {
+    //res.json({ info: "Node.js, Express, and Postgres API" });
+    res.render('index');
+});
+
+app.get('/user/register', (req, res) => {
+     res.render('userRegister');
+ });
+
+app.get('/user/login', (req, res) => {
+     res.render('userLogin');
+ });
+
 app.post("/user/register", db.userRegister);
+
+app.post("/user/login", db.userLogin);
+
+
+
 
 app.get("/test", (req, res) => {
   const developers = [

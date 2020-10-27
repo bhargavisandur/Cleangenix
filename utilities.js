@@ -1,4 +1,8 @@
 const request = require("request");
+const util = require("util");
+const exec = util.promisify(require("child_process").exec);
+var ExifImage = require("exif").ExifImage;
+var im = require("imagemagick");
 
 const getCoordinatesFromPincode = (pincode) => {
   const options = {
@@ -18,8 +22,53 @@ const getCoordinatesFromPincode = (pincode) => {
   return temp;
 };
 
+const getLocationFromPhoto = async (filename) => {
+  try {
+    const { stdout, stderr } = await exec(
+      'exiftool -c "%.6f" ./public/active_complaints/' + filename
+    );
+    // console.log(`stderr:${stderr}`);
+
+    let location = {
+      lat: 0.0,
+      lng: 0.0,
+    };
+    // console.log(stdout);
+    const lines = stdout.toString().split("\n");
+    console.log(lines);
+    lines.forEach((line) => {
+      const parts = line.split(":");
+      if (parts[0].trim() === "GPS Latitude") {
+        if (parts[1].trim().includes("N")) {
+          parts[1] = parts[1].trim().slice(0, parts[1].trim().length - 1);
+        } else {
+          parts[1] = "-" + parts[1].trim().slice(0, parts[1].trim().length - 1);
+        }
+        location.lat = parseFloat(parts[1].trim());
+      }
+      if (parts[0].trim() === "GPS Longitude") {
+        if (parts[1].trim().includes("E")) {
+          parts[1] = parts[1].trim().slice(0, parts[1].trim().length - 1);
+        } else {
+          parts[1] = "-" + parts[1].trim().slice(0, parts[1].trim().length - 1);
+        }
+        location.lng = parseFloat(parts[1].trim());
+      }
+    });
+    console.log(location);
+    return location;
+  } catch (error) {
+    console.log(`error: ${error.message}`);
+    return;
+  }
+};
+
 const tempFunction = () => {
   return "abc";
 };
 
-module.exports = { getCoordinatesFromPincode, tempFunction };
+module.exports = {
+  getCoordinatesFromPincode,
+  tempFunction,
+  getLocationFromPhoto,
+};

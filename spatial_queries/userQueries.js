@@ -1,22 +1,18 @@
 const pool = require("../pool.js");
 const util = require("../utilities");
+const { v4: uuidv4, uuid } = require("uuid");
+const fs = require("fs");
 const request = require("request");
+const moment = require("moment");
 const bcrypt = require("bcrypt");
-
-
-
 
 const userRegister = async (req, res) => {
   try {
     const { phone_no, pincode, password, repassword } = req.body;
     if (repassword != password) {
       res.json({ msg: "Passwords do not match" });
-
-
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    
-    
 
     const options = {
       method: "GET",
@@ -53,58 +49,130 @@ const userRegister = async (req, res) => {
   }
 };
 
-
-
-
-const userLogin =  async (req, res) => 
-{
-	let errors = [];
-    const { phone_no, password } = req.body;
-    		await pool.query('SELECT password FROM users WHERE phone_no = $1', [phone_no], 
-        (error, results)=> {
-        	
-        	if(error)
-        		throw error;
-        	else
-        	{
-        		if(results.rows.length == 0)
-        		{        	
-        			errors.push({ message: "Register yourself first!" });	
-        			console.log("NO MATCH");
-        			res.render('userRegister' ,{ errors});
-        		
-        		}
-        		else
-        		{
-        			flag = 0;
-        			for (var i = 0; i < results.rows.length; i++)
-	        		{
-	        			if(bcrypt.compareSync(password , results.rows[i].password))
-	        			{
-	        				flag = 1;
-	        				break;       				
-
-	        			}
-	        		}
-	        		if(flag == 1)
-	        		{
-							console.log("Matches");
-	        				res.redirect("/");
-	        		}
-	        		else
-	        		{
-	        			errors.push({ message: "Incorrect password!" });
-	        			res.render("userLogin", { errors});
-	        			
-	        		}
-	        		
-        		}       		
-        	}
-        });
-
+const userLogin = async (req, res) => {
+  let errors = [];
+  const { phone_no, password } = req.body;
+  await pool.query(
+    "SELECT * FROM users WHERE phone_no = $1",
+    [phone_no],
+    (error, results) => {
+      if (error) throw error;
+      else {
+        if (results.rows.length == 0) {
+          errors.push({ message: "Register yourself first!" });
+          console.log("NO MATCH");
+          res.render("userRegister", { errors });
+        } else {
+          flag = 0;
+          let user_id = "";
+          for (var i = 0; i < results.rows.length; i++) {
+            if (bcrypt.compareSync(password, results.rows[i].password)) {
+              user_id = results.rows[i].user_id;
+              flag = 1;
+              break;
+            }
+          }
+          if (flag == 1) {
+            console.log("Matches");
+            res.redirect(`/user/complaints/view/${user_id}`);
+          } else {
+            errors.push({ message: "Incorrect password!" });
+            res.render("userLogin", { errors });
+          }
+        }
+      }
+    }
+  );
 };
 
+//POST@ /users/complaints/post/:user_id
+const postUserComplaintForm = async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    console.log(user_id);
+    let errors = [];
+    // if (!req.body.images[0]) {
+    //   errors.push({ message: "File not chosen" });
+    //   res.render("uploadComplaintForm", { errors, user_id });
+    // }
+    if (!req.file) {
+      errors.push({ message: "File not chosen, or incorrect format of file" });
+      res.render("uploadComplaintForm", { errors, user_id });
+    } else if (req.errmessage) {
+      errors.push({ message: req.errmessage });
+      res.render("uploadComplaintForm", { errors, user_id });
+    } else {
+      console.log(req.file);
+      const { filename, path } = req.file;
 
+      let location = await util.getLocationFromPhoto(filename);
+      console.log(location);
+      // await utililties.getLocation("8.jpg");
+      const lat = location.lat;
+      const long = location.lng;
+      const ward_id = null;
 
+      const today = new Date();
+      const currentMonth =
+        today.getMonth() < 10 ? "0" + today.getMonth() : "" + today.getMonth();
+      console.log(currentMonth);
+      const currentDate =
+        today.getFullYear() + "" + currentMonth + "" + today.getDate();
+      var currentTime = moment().format("HHmmss");
 
-module.exports = { userRegister, userLogin };
+      const status = "OK";
+
+      const queryResult = await pool.query(
+        "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6)",
+        [
+          user_id,
+          lat,
+          long,
+          ward_id,
+          req.file.path,
+          status,
+          currentDate,
+          "YYYYMMDD",
+          currentTime,
+          "HH24MIss",
+        ]
+      );
+      res.redirect(`/user/complaints/post/${user_id}`);
+    }
+    console.log(user_id);
+  } catch (err) {
+    throw err;
+    res.send(err);
+  }
+};
+
+//GET@ /user/complaints/post/:user_id
+const getUserComplaintForm = async (req, res) => {
+  try {
+    res.render("uploadComplaint");
+  } catch (err) {
+    throw err;
+  }
+};
+
+//GET@ /user/complaints/view/:user_id
+const viewAllComplaints = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM active_complaints");
+
+    res.render("allComplaints", {
+      complaints: result.rows,
+      user_id: req.params.user_id,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = {
+  userRegister,
+  userLogin,
+  viewAllComplaints,
+  postUserComplaintForm,
+  getUserComplaintForm,
+};

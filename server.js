@@ -3,10 +3,9 @@ const path = require("path");
 const app = express();
 const ejs = require("ejs");
 const db = require("./spatial_queries/combinedQueries");
-const bcrypt = require('bcrypt');
-
-
-
+const bcrypt = require("bcrypt");
+const { uploadImage } = require("./contollers/multipart");
+const { resizeImages } = require("./contollers/resize");
 
 // For parsing application/json
 app.use(express.json());
@@ -19,25 +18,63 @@ app.use(express.static("public"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.get('/', (req, res) => {
-    //res.json({ info: "Node.js, Express, and Postgres API" });
-    res.render('index');
+//GET@ public
+//get landing page, public
+app.get("/", (req, res) => {
+  //res.json({ info: "Node.js, Express, and Postgres API" });
+  res.render("index");
 });
 
-app.get('/user/register', (req, res) => {
-     res.render('userRegister');
- });
+//***********user authentication routes**********//
 
-app.get('/user/login', (req, res) => {
-     res.render('userLogin');
- });
+//GET@ /user/register
+//get user register page, public
+app.get("/user/register", (req, res) => {
+  res.render("userRegister");
+});
 
+//GET@ /user/login
+//get user login page, public
+app.get("/user/login", (req, res) => {
+  res.render("userLogin");
+});
+
+//POST@ /user/register
+//post register form, public
 app.post("/user/register", db.userRegister);
 
+//POST@ /user/login
+//post login form, public
 app.post("/user/login", db.userLogin);
 
+//******************end********************** */
 
+//*****************complaint routes************* */
 
+// POST@ /user/complaints/post/:user_id
+// user posts a complaint, private
+
+app.post(
+  "/user/complaints/post/:user_id",
+  uploadImage,
+  db.postUserComplaintForm
+);
+
+// GET@ /user/complaints/post/:user_id
+// show user the complaint form, private
+app.get("/user/complaints/post/:user_id", (req, res) => {
+  console.log(req.params.user_id);
+  res.render("uploadComplaintForm", { user_id: req.params.user_id });
+});
+
+// GET@ /user/complaints/view/:user_id
+// view all complaints posted by other users, private
+app.get("/user/complaints/view/:user_id", (req, res) => {
+  console.log(req.params.user_id);
+  db.viewAllComplaints(req, res);
+});
+
+//*****************************end ************************ */
 
 app.get("/test", (req, res) => {
   const developers = [
@@ -49,7 +86,7 @@ app.get("/test", (req, res) => {
   res.render("test", { developers });
 });
 
-const PORT = 5000;
+const PORT = 5000 || process.env.PORT;
 
 app.listen(PORT, (err) => {
   console.log(`server running on port ${PORT}`);

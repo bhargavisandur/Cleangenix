@@ -5,6 +5,7 @@ const fs = require("fs");
 const request = require("request");
 const moment = require("moment");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
 
 const userRegister = async (req, res) => {
   try {
@@ -14,23 +15,19 @@ const userRegister = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    const options = {
-      method: "GET",
+    const config = {
+      method: "get",
       url: `https://us1.locationiq.com/v1/search.php?key=pk.9e8187ff3784e0e5cfef0fe6733bfd25&postalcode=${pincode}&format=json\n&limit=1&countrycodes=IN`,
       headers: {
         Cookie: "__cfduid=d87813cbe48abdce582fcd0f95df5d5331602794222",
       },
     };
-    var temp;
-    var lat;
-    var long;
-    request(options, function (error, response) {
-      if (error) return error;
-      console.log(response.body);
-      temp = response.body;
-      lat = response.body[0].lat;
-      long = response.body[0].lon;
-    });
+
+    const latlongRes = await axios(config);
+    console.log(JSON.stringify(latlongRes.data));
+    const lat = latlongRes.data[0].lat;
+    const long = latlongRes.data[0].lon;
+    console.log(typeof lat);
 
     const response = await pool.query(
       "INSERT INTO users (phone_no, pincode, password, lat , long , geolocation) VALUES ($1, $2, $3, $4, $5, ST_MakePoint($5, $4))",
@@ -40,7 +37,6 @@ const userRegister = async (req, res) => {
     res.redirect("/user/login");
 
     // console.log(JSON.stringify(response.rows));
-    res.json(response);
   } catch (err) {
     if (err) {
       console.log(err);
@@ -111,7 +107,7 @@ const postUserComplaintForm = async (req, res) => {
       const lat = parseFloat(location.lat);
       const long = parseFloat(location.lng);
       const ward_id = null;
-      
+
       console.log(lat);
       console.log(long);
 
@@ -172,59 +168,57 @@ const viewAllComplaints = async (req, res) => {
   }
 };
 
-const activeDrives = (req,res) => {
+const activeDrives = (req, res) => {
   var user_id = req.params.user_id;
   console.log(user_id);
-  pool.query(
-      'SELECT * FROM campaign',
-      (err, result) => {
-          if (err) throw err;
-          else
-          {
-              // console.log(result.rows); 
-              var campaignItems = result.rows;
-              res.render('user_enroll', {campaignItems:campaignItems,user_id:user_id});
-          }
-          
+  pool.query("SELECT * FROM campaign", (err, result) => {
+    if (err) throw err;
+    else {
+      // console.log(result.rows);
+      var campaignItems = result.rows;
+      res.render("user_enroll", {
+        campaignItems: campaignItems,
+        user_id: user_id,
       });
+    }
+  });
 };
 
-const participateCampaign = (req,res) => {
+const participateCampaign = (req, res) => {
   var user_id = req.params.user_id;
   var campaign_id = req.body.enroll;
   // console.log(typeof(user_id));
   pool.query(
-      'INSERT INTO campaign_participation (user_id, campaign_id) VALUES ($1, $2)',
-      [user_id.toString(), campaign_id.toString()],
-  (err,result) => {
-      if(err) throw err;
-      else
-      {
-          res.redirect("/user/drives/enroll/" +user_id);
+    "INSERT INTO campaign_participation (user_id, campaign_id) VALUES ($1, $2)",
+    [user_id.toString(), campaign_id.toString()],
+    (err, result) => {
+      if (err) throw err;
+      else {
+        res.redirect("/user/drives/enroll/" + user_id);
       }
-  }
-  
+    }
   );
-    
 };
 
-const filterCampaign = (req,res) => {
-  var buf = parseFloat(req.body.distance)*1000;
+const filterCampaign = (req, res) => {
+  var buf = parseFloat(req.body.distance) * 1000;
   var user_id = req.params.user_id;
-  console.log(typeof(buf));
-  pool.query (
-      'SELECT * FROM campaign,users WHERE st_intersects(campaign.geolocation,st_buffer(users.geolocation,$1)) AND users.user_id=$2',
-      [buf,user_id],
-  
-  (err, result) => {
+  console.log(typeof buf);
+  pool.query(
+    "SELECT * FROM campaign,users WHERE st_intersects(campaign.geolocation,st_buffer(users.geolocation,$1)) AND users.user_id=$2",
+    [buf, user_id],
+
+    (err, result) => {
       if (err) throw err;
-      
+
       console.log(result.rows);
       var campaignItems = result.rows;
-      res.render('user_enroll',{campaignItems:campaignItems,user_id:user_id});
-      
-  });
-
+      res.render("user_enroll", {
+        campaignItems: campaignItems,
+        user_id: user_id,
+      });
+    }
+  );
 };
 
 module.exports = {
@@ -233,7 +227,7 @@ module.exports = {
   viewAllComplaints,
   postUserComplaintForm,
   getUserComplaintForm,
-  activeDrives, 
-  participateCampaign, 
+  activeDrives,
+  participateCampaign,
   filterCampaign,
 };

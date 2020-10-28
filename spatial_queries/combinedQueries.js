@@ -10,6 +10,9 @@ const userLogin = userQueries.userLogin;
 const postUserComplaintForm = userQueries.postUserComplaintForm;
 const viewAllComplaints = userQueries.viewAllComplaints;
 const getUserComplaintForm = userQueries.getUserComplaintForm;
+const activeDrives = userQueries.activeDrives;
+const participateCampaign = userQueries.participateCampaign;
+const filterCampaign = userQueries.filterCampaign;
 
 //Worker Queries
 
@@ -19,4 +22,7 @@ module.exports = {
   postUserComplaintForm,
   viewAllComplaints,
   getUserComplaintForm,
+  activeDrives,
+  participateCampaign,
+  filterCampaign,
 };

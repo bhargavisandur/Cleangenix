@@ -76,6 +76,25 @@ app.get("/user/complaints/view/:user_id", (req, res) => {
 
 //*****************************end ************************ */
 
+//*****************drives route************* */
+
+// GET@ /user/drives/enroll/:user_id
+// shows all the drives organized
+app.get("/user/drives/enroll/:user_id",(req, res) =>{
+  db.activeDrives(req,res);
+});
+
+// POST@ /user/drives/enroll/:user_id
+// for enrolling in a drive
+app.post("/user/drives/enroll/:user_id",db.participateCampaign);
+
+// POST@ /user/drives/enroll/filter/:user_id
+// for filtering the nearest drives
+app.post("/user/drives/enroll/filter/:user_id",db.filterCampaign);
+
+//*****************************end ************************ */
+
+
 app.get("/test", (req, res) => {
   const developers = [
     { id: 1, name: "Bhargavi Sandur", age: 20 },

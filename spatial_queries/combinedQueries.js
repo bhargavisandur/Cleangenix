@@ -13,6 +13,7 @@ const getUserComplaintForm = userQueries.getUserComplaintForm;
 const activeDrives = userQueries.activeDrives;
 const participateCampaign = userQueries.participateCampaign;
 const filterCampaign = userQueries.filterCampaign;
+const insertWardGeoJSON = adminQueries.insertWardGeoJSON;
 
 //Worker Queries
 
@@ -25,4 +26,5 @@ module.exports = {
   activeDrives,
   participateCampaign,
   filterCampaign,
+  insertWardGeoJSON,
 };

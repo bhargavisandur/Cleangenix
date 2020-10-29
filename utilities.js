@@ -3,6 +3,7 @@ const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 var ExifImage = require("exif").ExifImage;
 var im = require("imagemagick");
+const pool = require("./pool");
 
 const getCoordinatesFromPincode = (pincode) => {
   const options = {
@@ -63,6 +64,21 @@ const getLocationFromPhoto = async (filename) => {
   }
 };
 
+//get the BMC ward corresponding to the image location
+const getBMC_ward = async (lat, long) => {
+  try {
+    // SELECT ward_name, ST_Intersects(ward_location::geometry, ST_GeomFromText('POINT(72.834654 18.921984)', 4326)::geometry)  FROM ward;
+    const response = await pool.query(
+      "SELECT ward_id FROM ward where ST_Intersects(ward_location::geometry, ST_SetSRID(ST_MakePoint($1, $2)::geometry,4326))=true",
+      [parseFloat(long), parseFloat(lat)]
+    );
+    console.log(response);
+    return response.rows;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const tempFunction = () => {
   return "abc";
 };
@@ -71,4 +87,5 @@ module.exports = {
   getCoordinatesFromPincode,
   tempFunction,
   getLocationFromPhoto,
+  getBMC_ward,
 };

@@ -64,7 +64,11 @@ app.post(
 // show user the complaint form, private
 app.get("/user/complaints/post/:user_id", (req, res) => {
   console.log(req.params.user_id);
-  res.render("uploadComplaintForm", { user_id: req.params.user_id });
+  res.render("uploadComplaintForm", {
+    user_id: req.params.user_id,
+    color: "green",
+    errors: [{ message: "Make sure to turn on your GPS" }],
+  });
 });
 
 // GET@ /user/complaints/view/:user_id
@@ -80,20 +84,22 @@ app.get("/user/complaints/view/:user_id", (req, res) => {
 
 // GET@ /user/drives/enroll/:user_id
 // shows all the drives organized
-app.get("/user/drives/enroll/:user_id",(req, res) =>{
-  db.activeDrives(req,res);
+app.get("/user/drives/enroll/:user_id", (req, res) => {
+  db.activeDrives(req, res);
 });
 
 // POST@ /user/drives/enroll/:user_id
 // for enrolling in a drive
-app.post("/user/drives/enroll/:user_id",db.participateCampaign);
+app.post("/user/drives/enroll/:user_id", db.participateCampaign);
 
 // POST@ /user/drives/enroll/filter/:user_id
 // for filtering the nearest drives
-app.post("/user/drives/enroll/filter/:user_id",db.filterCampaign);
+app.post("/user/drives/enroll/filter/:user_id", db.filterCampaign);
 
 //*****************************end ************************ */
+//*******************************admin routes******************** */
 
+app.post("/admin/insert/wards", db.insertWardGeoJSON);
 
 app.get("/test", (req, res) => {
   const developers = [

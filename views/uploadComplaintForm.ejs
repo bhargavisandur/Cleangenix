@@ -125,7 +125,7 @@
         <p>
         	<ul>
       <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
-					      <h4 style="text-align:center;color:red"><strong><%= error.message %></strong></h4>
+					      <h4 style="text-align:center;color:<%=color%>"><strong><%= error.message %></strong></h4>
 					      <% }) %> <% } %>
 					    </ul>
 

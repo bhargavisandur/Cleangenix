@@ -81,6 +81,70 @@ const userLogin = async (req, res) => {
   );
 };
 
+// //POST@ /users/complaints/post/:user_id
+// const postUserComplaintForm = async (req, res) => {
+//   try {
+//     const user_id = req.params.user_id;
+//     console.log(user_id);
+//     let errors = [];
+//     // if (!req.body.images[0]) {
+//     //   errors.push({ message: "File not chosen" });
+//     //   res.render("uploadComplaintForm", { errors, user_id });
+//     // }
+//     if (!req.file) {
+//       errors.push({ message: "File not chosen, or incorrect format of file" });
+//       res.render("uploadComplaintForm", { errors, user_id });
+//     } else if (req.errmessage) {
+//       errors.push({ message: req.errmessage });
+//       res.render("uploadComplaintForm", { errors, user_id });
+//     } else {
+//       console.log(req.file);
+//       const { filename, path } = req.file;
+
+//       let location = await util.getLocationFromPhoto(filename);
+//       console.log(location);
+//       // await utililties.getLocation("8.jpg");
+//       const lat = parseFloat(location.lat);
+//       const long = parseFloat(location.lng);
+//       const ward_id = null;
+
+//       console.log(lat);
+//       console.log(long);
+
+//       const today = new Date();
+//       const currentMonth =
+//         today.getMonth() < 10 ? "0" + today.getMonth() : "" + today.getMonth();
+//       console.log(currentMonth);
+//       const currentDate =
+//         today.getFullYear() + "" + currentMonth + "" + today.getDate();
+//       var currentTime = moment().format("HHmmss");
+
+//       const status = "OK";
+
+//       const queryResult = await pool.query(
+//         "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6)",
+//         [
+//           user_id,
+//           lat,
+//           long,
+//           ward_id,
+//           req.file.path,
+//           status,
+//           currentDate,
+//           "YYYYMMDD",
+//           currentTime,
+//           "HH24MIss",
+//         ]
+//       );
+//       res.redirect(`/user/complaints/post/${user_id}`);
+//     }
+//     console.log(user_id);
+//   } catch (err) {
+//     throw err;
+//     res.send(err);
+//   }
+// };
+
 //POST@ /users/complaints/post/:user_id
 const postUserComplaintForm = async (req, res) => {
   try {
@@ -93,50 +157,70 @@ const postUserComplaintForm = async (req, res) => {
     // }
     if (!req.file) {
       errors.push({ message: "File not chosen, or incorrect format of file" });
-      res.render("uploadComplaintForm", { errors, user_id });
+      res.render("uploadComplaintForm", { errors, user_id, color: "red" });
     } else if (req.errmessage) {
       errors.push({ message: req.errmessage });
-      res.render("uploadComplaintForm", { errors, user_id });
+      res.render("uploadComplaintForm", { errors, user_id, color: "red" });
     } else {
+      //get location from the photo
       console.log(req.file);
       const { filename, path } = req.file;
 
       let location = await util.getLocationFromPhoto(filename);
       console.log(location);
-      // await utililties.getLocation("8.jpg");
-      const lat = parseFloat(location.lat);
-      const long = parseFloat(location.lng);
-      const ward_id = null;
 
-      console.log(lat);
-      console.log(long);
+      const lat = location.lat;
+      const long = location.lng;
+      if (lat == 0) {
+        errors.push({
+          message:
+            "Could not identify location of the picture. Make sure you have enabled your GPS and given permission to geocode your photos",
+        });
+        res.render("uploadComplaintForm", { errors, user_id, color: "red" });
+      } else {
+        //get the ward corresponding to the location of pic
+        const wards = await util.getBMC_ward(lat, long);
 
-      const today = new Date();
-      const currentMonth =
-        today.getMonth() < 10 ? "0" + today.getMonth() : "" + today.getMonth();
-      console.log(currentMonth);
-      const currentDate =
-        today.getFullYear() + "" + currentMonth + "" + today.getDate();
-      var currentTime = moment().format("HHmmss");
+        if (wards.length == 0) {
+          errors.push({
+            message: "Picture not taken in Mumbai, cannot assign a ward",
+          });
+          res.render("uploadComplaintForm", { errors, user_id, color: "red" });
+        } else {
+          const ward_id = wards[0].ward_id;
 
-      const status = "OK";
+          //calculate current date and time
+          const today = new Date();
+          const currentMonth =
+            today.getMonth() < 10
+              ? "0" + today.getMonth()
+              : "" + today.getMonth();
+          console.log(currentMonth);
+          const currentDate =
+            today.getFullYear() + "" + currentMonth + "" + today.getDate();
+          var currentTime = moment().format("HHmmss");
 
-      const queryResult = await pool.query(
-        "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6)",
-        [
-          user_id,
-          lat,
-          long,
-          ward_id,
-          req.file.path,
-          status,
-          currentDate,
-          "YYYYMMDD",
-          currentTime,
-          "HH24MIss",
-        ]
-      );
-      res.redirect(`/user/complaints/post/${user_id}`);
+          //get status of the complaint
+          const status = "OK";
+
+          const queryResult = await pool.query(
+            "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6)",
+            [
+              user_id,
+              lat,
+              long,
+              ward_id,
+              req.file.path,
+              status,
+              currentDate,
+              "YYYYMMDD",
+              currentTime,
+              "HH24MIss",
+            ]
+          );
+          res.redirect(`/user/complaints/post/${user_id}`);
+        }
+      }
     }
     console.log(user_id);
   } catch (err) {

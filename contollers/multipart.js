@@ -22,6 +22,7 @@ const upload = multer({
       file.mimetype == "image/jpg" ||
       file.mimetype == "image/jpeg"
     ) {
+      console.log("in here");
       cb(null, true);
     } else {
       cb(null, false);
@@ -36,7 +37,7 @@ const uploadImage = (req, res, next) => {
       throw err;
     } else if (err) {
       // handle other errors
-
+      console.log(err);
       req.errmessage = err;
     }
 

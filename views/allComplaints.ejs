@@ -34,6 +34,19 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <link href="/css/style.css" rel="stylesheet">
+    <!-- <script type="text/javascript">
+      // const registerURL = `http://localhost:5000/user/register/${ref_id}`;
+      // alert(
+      //   `You are successfully registered!\n To earn rewards share the link down below\n ${registerURL}`
+      // );
+      
+      alert(
+        `You are successfully registered!\n To earn rewards share the link down below\n`
+      );
+      
+    </script> -->
+
 </head>
 
 <body>
@@ -81,12 +94,12 @@
           </li>
           <li><a href="#team">Nearest Souchalay</a></li>
           
-          <li><a href="#contact">My profile</a></li>
+          <li><a href="/user/profile/view/<%=user_id%>">My profile</a></li>
 
         </ul>
       </nav><!-- .nav-menu -->
 
-      <a href="#about" class="get-started-btn scrollto">Logout</a>
+      <a href="/user/logout" class="get-started-btn scrollto">Logout</a>
 
     </div>
   </header><!-- End Header -->
@@ -174,7 +187,7 @@
 
   <!-- Template Main JS File -->
   <script src="/js/main.js"></script>
-
+  
 </body>
 
 </html>

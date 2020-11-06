@@ -64,15 +64,15 @@ const getLocationFromPhoto = async (filename) => {
   }
 };
 
-//get the BMC ward corresponding to the image location
+//get the BMC ward corresponding to the location
 const getBMC_ward = async (lat, long) => {
   try {
     // SELECT ward_name, ST_Intersects(ward_location::geometry, ST_GeomFromText('POINT(72.834654 18.921984)', 4326)::geometry)  FROM ward;
     const response = await pool.query(
-      "SELECT ward_id FROM ward where ST_Intersects(ward_location::geometry, ST_SetSRID(ST_MakePoint($1, $2)::geometry,4326))=true",
+      "SELECT * FROM ward where ST_Intersects(ward_location::geometry, ST_SetSRID(ST_MakePoint($1, $2)::geometry,4326))=true",
       [parseFloat(long), parseFloat(lat)]
     );
-    console.log(response);
+    //console.log(response);
     return response.rows;
   } catch (error) {
     console.log(error);

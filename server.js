@@ -128,34 +128,35 @@ passport.use(
                   return done(null, false);
                 } else {
                   console.log("email found");
-                  bcrypt.compare(password, result.rows[0].password, function (
-                    err,
-                    check
-                  ) {
-                    if (err) {
-                      console.log("Error while checking password");
-                      return done();
-                    } else {
-                      if (check === true) {
-                        console.log("password match");
-                        console.log(result.rows[0].user_id);
-                        return done(null, [
-                          {
-                            lat: result.rows[0].lat,
-                            long: result.rows[0].long,
-                            user_id: result.rows[0].user_id,
-                            ref_id: result.rows[0].ref_id,
-                          },
-                        ]);
+                  bcrypt.compare(
+                    password,
+                    result.rows[0].password,
+                    function (err, check) {
+                      if (err) {
+                        console.log("Error while checking password");
+                        return done();
                       } else {
-                        console.log(result.rows[0].password);
-                        console.log(password);
-                        console.log(password);
-                        console.log("no match");
-                        return done(null, false);
+                        if (check === true) {
+                          console.log("password match");
+                          console.log(result.rows[0].user_id);
+                          return done(null, [
+                            {
+                              lat: result.rows[0].lat,
+                              long: result.rows[0].long,
+                              user_id: result.rows[0].user_id,
+                              ref_id: result.rows[0].ref_id,
+                            },
+                          ]);
+                        } else {
+                          console.log(result.rows[0].password);
+                          console.log(password);
+                          console.log(password);
+                          console.log("no match");
+                          return done(null, false);
+                        }
                       }
                     }
-                  });
+                  );
                 }
               }
             )
@@ -238,7 +239,62 @@ app.post("/user/drives/enroll/filter/:user_id", db.filterCampaign);
 //*****************************end ************************ */
 //*******************************admin routes******************** */
 
+//for automatic insertion of wards in sdb and gdb
 app.post("/admin/insert/wards", db.insertWardGeoJSON);
+
+//GET @ /admin/login
+app.get("/admin/login", (req, res) => {
+  res.render("adminLogin");
+});
+
+//POST @ /admin/login
+app.post("/admin/login", db.adminLogin);
+
+//GET @ /admin/home
+app.get("/admin/home/:ward_id", (req, res) => {
+  res.render("adminHome", { ward_id: req.params.ward_id });
+});
+
+//GET @ /admin/logout
+app.get("/admin/logout", (req, res) => {
+  res.redirect("/admin/login");
+});
+
+//GET @ /admin/complaints/active/:ward_id
+//view all active complaints
+app.get("/admin/complaints/active/:ward_id", async (req, res) => {
+  try {
+    const activeComplaints = await db.getActiveComplaints(req.params.ward_id);
+    res.render("adminActiveComplaints", {
+      ward_id: req.params.ward_id,
+      active_complaints: activeComplaints,
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+//POST @ /admin/complaints/resolve/:ward_id/:complaint_id
+//resolved a particular complaint
+app.post(
+  "/admin/complaints/resolve/:ward_id/:complaint_id",
+  db.resolveComplaint
+);
+
+//GET @ /admin/complaints/resolved/:ward_id
+app.get("/admin/complaints/resolved/:ward_id", async (req, res) => {
+  try {
+    const resolvedComplaints = await db.getResolvedComplaints(
+      req.params.ward_id
+    );
+    res.render("adminResolvedComplaints", {
+      ward_id: req.params.ward_id,
+      resolved_complaints: resolvedComplaints,
+    });
+  } catch (error) {
+    throw error;
+  }
+});
 
 //*************************************end************************** */
 

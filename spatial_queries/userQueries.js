@@ -186,7 +186,7 @@ const postUserComplaintForm = async (req, res) => {
           var currentTime = moment().format("HHmmss");
 
           //get status of the complaint
-          const status = "OK";
+          const status = "active";
 
           const queryResult = await pool.query(
             "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6)",

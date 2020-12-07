@@ -1,5 +1,6 @@
 const adminQueries = require("./adminQueries");
 const userQueries = require("./userQueries");
+const complaintQueries = require("./complaintQueries");
 
 //Admin Queries
 
@@ -15,6 +16,11 @@ const participateCampaign = userQueries.participateCampaign;
 const filterCampaign = userQueries.filterCampaign;
 const insertWardGeoJSON = adminQueries.insertWardGeoJSON;
 const getUserProfilePage = userQueries.getUserProfilePage;
+const adminLogin = adminQueries.adminLogin;
+
+const getActiveComplaints = complaintQueries.getActiveComplaints;
+const resolveComplaint = complaintQueries.resolveComplaint;
+const getResolvedComplaints = complaintQueries.getResolvedComplaints;
 
 //Worker Queries
 
@@ -29,4 +35,8 @@ module.exports = {
   filterCampaign,
   insertWardGeoJSON,
   getUserProfilePage,
+  adminLogin,
+  getActiveComplaints,
+  resolveComplaint,
+  getResolvedComplaints,
 };

@@ -5,6 +5,7 @@ create table users(
 	password varchar(100),
 	lat float,
 	long float,
+	ref_id uuid,
 	geolocation geography(point, 4326),
 	rewards int);
 create table ward(
@@ -30,6 +31,7 @@ create table active_complaints(
 	); 
 create table BMC_worker(
 	worker_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+	password varchar(50),
 	ward_id UUID references ward(ward_id),
 	phone_no varchar(10)
 	);

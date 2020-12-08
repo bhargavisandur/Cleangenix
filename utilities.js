@@ -23,10 +23,10 @@ const getCoordinatesFromPincode = (pincode) => {
   return temp;
 };
 
-const getLocationFromPhoto = async (filename) => {
+const getLocationFromPhoto = async (filename, complaintTypeFolder) => {
   try {
     const { stdout, stderr } = await exec(
-      'exiftool -c "%.6f" ./public/active_complaints/' + filename
+      `exiftool -c "%.6f" ./public/${complaintTypeFolder}/` + filename
     );
     // console.log(`stderr:${stderr}`);
 

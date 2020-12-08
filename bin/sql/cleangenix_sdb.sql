@@ -31,7 +31,8 @@ create table active_complaints(
 create table BMC_worker(
 	worker_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
 	ward_id UUID references ward(ward_id),
-	phone_no varchar(10)
+	phone_no varchar(10), 
+	password varchar(50)
 	);
 
 

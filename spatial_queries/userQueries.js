@@ -159,7 +159,10 @@ const postUserComplaintForm = async (req, res) => {
       console.log(req.file);
       const { filename, path } = req.file;
 
-      let location = await util.getLocationFromPhoto(filename);
+      let location = await util.getLocationFromPhoto(
+        filename,
+        "active_complaints"
+      );
       console.log(location);
 
       const lat = location.lat;

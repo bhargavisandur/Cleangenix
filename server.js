@@ -274,12 +274,12 @@ app.get("/admin/complaints/active/:ward_id", async (req, res) => {
   }
 });
 
-//POST @ /admin/complaints/resolve/:ward_id/:complaint_id
-//resolved a particular complaint
-app.post(
-  "/admin/complaints/resolve/:ward_id/:complaint_id",
-  db.resolveComplaint
-);
+// //POST @ /admin/complaints/resolve/:ward_id/:complaint_id
+// //resolved a particular complaint
+// app.post(
+//   "/admin/complaints/resolve/:ward_id/:complaint_id",
+//   db.resolveComplaint
+// );
 
 //GET @ /admin/complaints/resolved/:ward_id
 app.get("/admin/complaints/resolved/:ward_id", async (req, res) => {
@@ -317,6 +317,30 @@ app.get("/admin/complaints/:ward_id/:complaint_id/:lat/:long", (req, res) => {
 // });
 
 //*************************************end************************** */
+
+//**************************************worker routes**************** */
+
+//GET @ /worker/login
+
+app.get("/worker/login", (req, res) => {
+  res.render("workerLogin");
+});
+
+//POST @ /worker/login
+app.post("/worker/login", db.workerLogin);
+
+//GET @ /worker/upload/:worker_id
+
+app.get("/worker/upload/:worker_id", (req, res) => {
+  res.render("workerUpload", { worker_id: req.params.worker_id });
+});
+
+//GET @ /worker/logout
+app.get("/worker/logout", (req, res) => {
+  res.redirect("/worker/login");
+});
+
+app.post("/worker/upload/:worker_id", uploadImage, db.postWorkerResolvedForm);
 
 //******************************profile routes ******************** */
 

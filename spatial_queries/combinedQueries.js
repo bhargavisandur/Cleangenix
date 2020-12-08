@@ -1,7 +1,7 @@
 const adminQueries = require("./adminQueries");
 const userQueries = require("./userQueries");
 const complaintQueries = require("./complaintQueries");
-
+const workerQueries = require("./workerQueries");
 //Admin Queries
 
 //User Queries
@@ -22,6 +22,10 @@ const getActiveComplaints = complaintQueries.getActiveComplaints;
 const resolveComplaint = complaintQueries.resolveComplaint;
 const getResolvedComplaints = complaintQueries.getResolvedComplaints;
 
+const workerLogin = workerQueries.workerLogin;
+
+const postWorkerResolvedForm = workerQueries.postWorkerResolvedForm;
+
 //Worker Queries
 
 module.exports = {
@@ -39,4 +43,6 @@ module.exports = {
   getActiveComplaints,
   resolveComplaint,
   getResolvedComplaints,
+  workerLogin,
+  postWorkerResolvedForm,
 };

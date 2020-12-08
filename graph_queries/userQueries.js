@@ -1,4 +1,5 @@
 const neoDriver = require("./neodriver");
+const addComplaintToUser = require("./complaintQueries");
 
 const insertWardInGraphDB = async (ward_id, ward_name) => {
   try {
@@ -14,12 +15,21 @@ const insertWardInGraphDB = async (ward_id, ward_name) => {
   }
 };
 
-const addUserToWard = async (ward_name, ref_id) => {
+const addUserToWard = async (ward_name, userDetails) => {
   try {
+    const { phone_no, pincode, lat, long, ref_id, user_id } = userDetails;
+
     const session1 = neoDriver.session();
     const result = await session1.run(
-      "CREATE (a:User {ref_id:$ref_id}) RETURN a",
-      { ref_id: ref_id }
+      "CREATE (a:User {ref_id:$ref_id, phone_no:$phone_no, pincode:$pincode, lat:$lat, long:$long, user_id:$user_id}) RETURN a",
+      {
+        ref_id: ref_id,
+        phone_no: phone_no,
+        lat: lat,
+        long: long,
+        pincode: pincode,
+        user_id: user_id,
+      }
     );
 
     console.log(ref_id);

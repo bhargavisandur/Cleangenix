@@ -9,6 +9,7 @@ const axios = require("axios");
 const alert = require("alert");
 
 const gdQueries = require("../graph_queries/userQueries");
+const complaintQueries = require("../graph_queries/complaintQueries");
 
 const userRegister = async (req, res) => {
   try {
@@ -39,9 +40,12 @@ const userRegister = async (req, res) => {
     //Generate the user ref_id;
     const ref_id = uuidv4();
 
+    //Generate the user_id
+    const user_id = uuidv4();
+
     //Insert the user details into the table
     const response = await pool.query(
-      "INSERT INTO users (phone_no, pincode, password, lat , long , geolocation, ref_id) VALUES ($1, $2, $3, $4, $5, ST_MakePoint($5, $4),$6 )",
+      "INSERT INTO users (phone_no, pincode, password, lat , long , geolocation, ref_id, user_id) VALUES ($1, $2, $3, $4, $5, ST_MakePoint($5, $4),$6, $7 )",
       [
         phone_no,
         pincode,
@@ -49,6 +53,7 @@ const userRegister = async (req, res) => {
         parseFloat(lat),
         parseFloat(long),
         ref_id,
+        user_id,
       ]
     );
 
@@ -61,9 +66,12 @@ const userRegister = async (req, res) => {
       ward_name_of_user = "Outside-Mumbai";
     } else {
       ward_name_of_user = wards_of_user[0].ward_name;
+      console.log("ward name of user is ");
+      console.log(ward_name_of_user);
     }
     //2. Add a relation between ward and user;
-    await gdQueries.addUserToWard(ward_name_of_user, ref_id);
+    const userDetails = { phone_no, pincode, lat, long, ref_id, user_id };
+    await gdQueries.addUserToWard(ward_name_of_user, userDetails);
 
     //Check if someone has recommended the user our application
     if (req.params.ref_id != "no_ref") {
@@ -173,7 +181,8 @@ const postUserComplaintForm = async (req, res) => {
           res.render("uploadComplaintForm", { errors, user_id, color: "red" });
         } else {
           const ward_id = wards[0].ward_id;
-
+          console.log("the ward of the pic is");
+          console.log(wards[0].ward_name);
           //calculate current date and time
           const today = new Date();
           const currentMonth =
@@ -188,8 +197,11 @@ const postUserComplaintForm = async (req, res) => {
           //get status of the complaint
           const status = "active";
 
+          //generate the complaint_id
+          const complaint_id = uuidv4();
+
           const queryResult = await pool.query(
-            "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6)",
+            "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status, complaint_id) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6, $11)",
             [
               user_id,
               lat,
@@ -201,8 +213,14 @@ const postUserComplaintForm = async (req, res) => {
               "YYYYMMDD",
               currentTime,
               "HH24MIss",
+              complaint_id,
             ]
           );
+
+          const complaintInfo = { lat, long, complaint_id };
+
+          await complaintQueries.addComplaintToUser(user_id, complaintInfo);
+
           res.redirect(`/user/complaints/post/${user_id}`);
         }
       }

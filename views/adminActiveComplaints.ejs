@@ -51,7 +51,13 @@
             alt="..."
           />
         </a> -->
-        <h1 class="logo mr-auto"><a href="/admin/home/<%=ward_id%>">Cleangenix</a></h1>
+        <h1 class="logo mr-auto" style="font-size: 30px;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;"><a style="color: #5cb874;"href="/admin/home/<%=ward_id%>">Cleangenix</a></h1>
       </div>
       <div class="navbar-inner">
         <!-- Collapse -->
@@ -176,7 +182,7 @@
   <!-- Main content -->
   <div class="main-content" id="panel">
     <!-- Topnav -->
-    <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
+    <nav class="navbar navbar-top navbar-expand navbar-dark border-bottom" style="background-color: #5cb874;">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <!-- Search form -->
@@ -397,23 +403,23 @@
     </nav>
     <!-- Header -->
     <!-- Header -->
-    <div class="header bg-primary pb-6">
+    <div class="header -primary pb-6" style="background-color: #5cb874;">
       <div class="container-fluid">
         <div class="header-body">
           <div class="row align-items-center py-4">
             <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">Tables</h6>
+             
               <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                   <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
-                  <li class="breadcrumb-item"><a href="#">Tables</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Tables</li>
+                  <li class="breadcrumb-item"><a href="#">Complaints</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Active</li>
                 </ol>
               </nav>
             </div>
             <div class="col-lg-6 col-5 text-right">
-              <a href="#" class="btn btn-sm btn-neutral">New</a>
-              <a href="#" class="btn btn-sm btn-neutral">Filters</a>
+              
+              <a href="#" class="btn btn-sm btn-neutral">View all on Map</a>
             </div>
           </div>
         </div>
@@ -460,7 +466,7 @@
                     </td>
                     <td class="text-right">
                       <div class="dropdown">
-                        <a class="btn btn-primary" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="btn btn-primary" href="/admin/complaints/<%=ward_id%>/<%=complaint.complaint_id%>/<%=complaint.lat%>/<%=complaint.long%>"  >
                           <!-- <i class="fas fa-ellipsis-v"></i> -->
                           View on Map
                         </a>
@@ -484,7 +490,7 @@
                     <td class="text-right">
                       <div class="dropdown">
                         <form method="POST" action="/admin/complaints/resolve/<%=ward_id%>/<%=complaint.complaint_id%>">
-                        <button class="btn btn-success"  >
+                        <button class="btn "style="background-color: #5cb874; color:white"  >
                           <!-- <i class="fas fa-ellipsis-v"></i> -->
                           Resolved
                         </button>

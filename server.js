@@ -296,6 +296,26 @@ app.get("/admin/complaints/resolved/:ward_id", async (req, res) => {
   }
 });
 
+//get the map showing a particular active complaint
+app.get("/admin/complaints/:ward_id/:complaint_id/:lat/:long", (req, res) => {
+  res.render("adminMap", {
+    complaint_id: req.params.complaint_id,
+    ward_id: req.params.ward_id,
+    lat: req.params.lat,
+    long: req.params.long,
+  });
+});
+
+// //get the map showing all active complaints
+// app.get("/admin/complaints/:ward_id/:lat/:long", async(req, res) => {
+//   const activeComplaints = await db.getActiveComplaints(req.params.ward_id);
+//   res.render("adminMap", {
+//     ward_id: req.params.ward_id,
+//     lat: req.params.lat,
+//     long: req.params.long,
+//   });
+// });
+
 //*************************************end************************** */
 
 //******************************profile routes ******************** */

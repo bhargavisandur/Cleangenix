@@ -124,11 +124,18 @@
     <section class="inner-page">
       <div style="padding-left: 10px; " class="justify-content-between align-items-center">
         
+        <a class="btn btn-success" href="/user/complaints/view/pending/<%=user_id%>">My pending Complaints</a>
+        <a class="btn btn-success" href="/user/complaints/view/resolved/<%=user_id%>">My resolved Complaints</a>
+     </div>
+      <div style="padding-left: 10px; " class="justify-content-between align-items-center">
+        
           <p> Your user reward points are : <%=rewardPoints%></p>
           <p> To earn more, share the link below : </p> <hr>
           <p> <%=refLink%></p>
          
       </div>
+      
+      
     </section>
 
   </main><!-- End #main -->

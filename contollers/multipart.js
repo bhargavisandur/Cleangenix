@@ -5,20 +5,22 @@ const path = require("path");
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (req.params.user_id) {
+      console.log("I am here in active");
       cb(null, "public/active_complaints/");
     } else {
+      console.log("I am here in resolved");
       cb(null, "public/resolved_complaints/");
     }
   },
   filename: function (req, file, cb) {
+    console.log(req.params.user_id);
+    console.log(file.originalname);
     cb(
       null,
-      req.params.user_id
-        ? req.params.user_id
-        : req.params.worker_id +
-            "-" +
-            uuidv4() +
-            path.extname(file.originalname)
+      (req.params.user_id ? req.params.user_id : req.params.worker_id) +
+        "+" +
+        uuidv4() +
+        ".jpg"
     );
   },
 });

@@ -214,6 +214,33 @@ app.get("/user/complaints/view/:user_id", (req, res) => {
   }
 });
 
+//GET@ /user/complaints/view/my/:user_id
+//view all complaints posted by me but not yet cleaned by anyone
+app.get("/user/complaints/view/pending/:user_id", (req, res) => {
+  if (!req.isAuthenticated()) {
+    res.redirect("/user/login");
+  } else {
+    db.viewMyActiveComplaints(req, res);
+    console.log();
+  }
+});
+
+//GET@ /user/complaint/view/resolved/:user_id
+//view all complaints resolved by BMC
+app.get("/user/complaints/view/resolved/:user_id", (req, res) => {
+  if (!req.isAuthenticated()) {
+    res.redirect("/user/login");
+  } else {
+    db.viewMyResolvedComplaints(req, res);
+    console.log();
+  }
+});
+
+app.post(
+  "/user/complaints/ack/:user_id/:resolved_complaint_id",
+  db.acknowledgeComplaintResolution
+);
+
 //*****************************end ************************ */
 
 //*****************drives route************* */

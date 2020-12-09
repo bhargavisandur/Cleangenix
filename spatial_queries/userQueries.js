@@ -338,6 +338,53 @@ const getUserProfilePage = async (req, res) => {
   }
 };
 
+const viewMyActiveComplaints = async (req, res) => {
+  try {
+    const user_id = req.user[0].user_id;
+    const response = await pool.query(
+      "SELECT * FROM active_complaints WHERE user_id=$1",
+      [user_id]
+    );
+    res.render("userMyActiveComplaints", {
+      complaints: response.rows,
+      user_id: req.params.user_id,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const viewMyResolvedComplaints = async (req, res) => {
+  try {
+    const user_id = req.user[0].user_id;
+    const response = await pool.query(
+      "SELECT * FROM resolved_complaints WHERE user_id=$1",
+      [user_id]
+    );
+    res.render("userMyResolvedComplaints", {
+      complaints: response.rows,
+      user_id: req.params.user_id,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const acknowledgeComplaintResolution = async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const resolved_complaint_id = req.params.resolved_complaint_id;
+
+    await pool.query(
+      "UPDATE resolved_complaints SET status=$1 WHERE complaint_id=$2",
+      ["R", resolved_complaint_id]
+    );
+    res.redirect(`/user/complaints/view/resolved/${user_id}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   userRegister,
   userLogin,
@@ -348,4 +395,7 @@ module.exports = {
   participateCampaign,
   filterCampaign,
   getUserProfilePage,
+  viewMyActiveComplaints,
+  viewMyResolvedComplaints,
+  acknowledgeComplaintResolution,
 };

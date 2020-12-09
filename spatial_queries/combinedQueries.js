@@ -25,6 +25,10 @@ const getResolvedComplaints = complaintQueries.getResolvedComplaints;
 const workerLogin = workerQueries.workerLogin;
 
 const postWorkerResolvedForm = workerQueries.postWorkerResolvedForm;
+const viewMyActiveComplaints = userQueries.viewMyActiveComplaints;
+const viewMyResolvedComplaints = userQueries.viewMyResolvedComplaints;
+const acknowledgeComplaintResolution =
+  userQueries.acknowledgeComplaintResolution;
 
 //Worker Queries
 
@@ -45,4 +49,7 @@ module.exports = {
   getResolvedComplaints,
   workerLogin,
   postWorkerResolvedForm,
+  viewMyActiveComplaints,
+  viewMyResolvedComplaints,
+  acknowledgeComplaintResolution,
 };

@@ -139,9 +139,10 @@
                  <span><%if (complaint.time!=undefined) {%><%=complaint.time.toString()%> <%} %></span>
                </div>
                <hr>
-               <h1 class="blog-post__title">Address</h1>
-               <!-- <p class="blog-post__text">
-               </p> -->
+               <h1 class="blog-post__title"></h1>
+               <p class="blog-post__text">
+                 <%=complaint.complaint_address%>
+               </p>
                <% if (complaint.status==="NR") {%>
                 <form action="/user/complaints/ack/<%=user_id%>/<%=complaint.complaint_id%>" method="POST">
                     <button class="btn btn-warning">Confirm Acknowledgment</button>
@@ -149,7 +150,7 @@
                
                <%}else{%>
                  <p class="blog-post__text">
-                   acknowleged!
+                  <button class="btn btn-success">Acknowledged!</button>
                </p>
                <%}%>
 

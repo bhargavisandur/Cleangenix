@@ -167,7 +167,7 @@ const postWorkerResolvedForm = async (req, res) => {
               const complaint = result4.rows[0];
 
               const res2 = await pool.query(
-                "INSERT INTO resolved_complaints (complaint_id, user_id, ward_id, image, worker_id, date, time, resolved_image, status ) VALUES ($1, $2, $3, $4, $5, TO_DATE($6, $7),TO_TIMESTAMP($8, $9), $10, $11)",
+                "INSERT INTO resolved_complaints (complaint_id, user_id, ward_id, image, worker_id, date, time, resolved_image, status, complaint_address ) VALUES ($1, $2, $3, $4, $5, TO_DATE($6, $7),TO_TIMESTAMP($8, $9), $10, $11, $12)",
                 [
                   complaint_id,
                   complaint.user_id,
@@ -180,6 +180,7 @@ const postWorkerResolvedForm = async (req, res) => {
                   "HH24MIss",
                   req.file.path,
                   "NR",
+                  complaint.complaint_address,
                 ]
               );
 

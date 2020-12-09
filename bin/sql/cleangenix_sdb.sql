@@ -27,7 +27,8 @@ create table active_complaints(
 	image varchar(150),
 	date date,
 	time time,
-	status varchar(100)
+	status varchar(100),
+	complaint_address varchar(10000)
 	); 
 create table BMC_worker(
 	worker_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -49,7 +50,9 @@ create table resolved_complaints(
 	ward_id UUID references ward(ward_id),
 	resolved_image varchar(150),
 	image varchar(150),
-	worker_id UUID references BMC_worker(worker_id)
+	worker_id UUID references BMC_worker(worker_id),
+	complaint_address varchar(10000), 
+	status varchar(50)
 	);
 
 create table campaign(

@@ -136,9 +136,9 @@
                  <span><%if (complaint.time!=undefined) {%><%=complaint.time.toString()%> <%} %></span>
                </div>
                <hr>
-               <h1 class="blog-post__title">Address</h1>
+               <h1 class="blog-post__title"></h1>
                <p class="blog-post__text">
-                
+                <%=complaint.complaint_address%>
                </p>
                <a href="#"  class="btn btn-danger">Report</a>
               </div>

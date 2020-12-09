@@ -204,8 +204,20 @@ const postUserComplaintForm = async (req, res) => {
           //generate the complaint_id
           const complaint_id = uuidv4();
 
+          //find the address of the complaint
+          const config = {
+            method: "get",
+            url: `https://us1.locationiq.com/v1/reverse.php?key=pk.9e8187ff3784e0e5cfef0fe6733bfd25&lat=${lat}&lon=${long}&format=json`,
+            headers: {
+              Cookie: "__cfduid=d87813cbe48abdce582fcd0f95df5d5331602794222",
+            },
+          };
+
+          const addressRes = await axios(config);
+          console.log(addressRes.data.display_name);
+
           const queryResult = await pool.query(
-            "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status, complaint_id) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6, $11)",
+            "INSERT INTO active_complaints ( user_id, lat, long, geolocation,ward_id,   image, date,time, status, complaint_id, complaint_address) values ($1, $2, $3,ST_MakePoint($3, $2),  $4,$5, TO_DATE($7, $8),TO_TIMESTAMP($9, $10), $6, $11, $12)",
             [
               user_id,
               lat,
@@ -218,6 +230,7 @@ const postUserComplaintForm = async (req, res) => {
               currentTime,
               "HH24MIss",
               complaint_id,
+              addressRes.data.display_name,
             ]
           );
 

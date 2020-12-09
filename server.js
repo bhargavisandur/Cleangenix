@@ -333,15 +333,23 @@ app.get("/admin/complaints/:ward_id/:complaint_id/:lat/:long", (req, res) => {
   });
 });
 
-// //get the map showing all active complaints
-// app.get("/admin/complaints/:ward_id/:lat/:long", async(req, res) => {
-//   const activeComplaints = await db.getActiveComplaints(req.params.ward_id);
-//   res.render("adminMap", {
-//     ward_id: req.params.ward_id,
-//     lat: req.params.lat,
-//     long: req.params.long,
-//   });
-// });
+//get the map showing all active complaints
+app.get("/admin/complaints/activeMap/:ward_id", async (req, res) => {
+  const activeComplaints = await db.getActiveComplaints(req.params.ward_id);
+  // console.log(activeComplaints);
+  // var rescue = [];
+  // for (var i = 0; i < activeComplaints.length; i++) {
+  //   const obj = {
+  //     lat: activeComplaints[i].lat,
+  //     lng: activeComplaints[i].lng,
+  //   };
+  //   rescue.push(obj);
+  // }
+  res.render("adminAllMap", {
+    ward_id: req.params.ward_id,
+    activeComplaints,
+  });
+});
 
 //*************************************end************************** */
 

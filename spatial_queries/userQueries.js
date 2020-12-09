@@ -70,6 +70,7 @@ const userRegister = async (req, res) => {
       console.log(ward_name_of_user);
     }
     //2. Add a relation between ward and user;
+    console.log("I am adding this user ID in neo4j", user_id);
     const userDetails = { phone_no, pincode, lat, long, ref_id, user_id };
     await gdQueries.addUserToWard(ward_name_of_user, userDetails);
 

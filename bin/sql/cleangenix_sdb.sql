@@ -70,7 +70,8 @@ create table campaign(
 create table campaign_participation(
 	campaign_id UUID references campaign(campaign_id),
 	user_id UUID references users(user_id),
-	feedback varchar(500)
+	feedback varchar(500), 
+	campaign_name varchar(50)
 	);
 
 create table latrine(

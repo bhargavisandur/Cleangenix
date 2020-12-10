@@ -77,29 +77,24 @@
 
       <nav class="nav-menu d-none d-lg-block">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li class="drop-down"><a href="">Complaints</a>
+          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/#portfolio">Portfolio</a></li>
+          <li><a href="/#team">Team</a></li>
+          <li class="drop-down"><a href="">Users</a>
             <ul>
-              <li><a href="/user/complaints/view/<%=user_id%>">View all complaints</a></li>
-              <li><a href="/user/complaints/post/<%=user_id%>">Post a complaint</a></li>
-             
+              <li><a href="/user/register/no_ref">Users</a></li>
+              <li><a href="/admin/login">Admin</a></li>
+              <li><a href="/#">BMC Worker</a></li>
             </ul>
           </li>
-          <li class="drop-down"><a href="">Drives</a>
-            <ul>
-              <li><a href="/user/drives/enroll/<%=user_id%>">Initiate a drive</a></li>
-              <li><a href="#">Enroll in a drive</a></li>
-            </ul>
-          </li>
-          <li><a href="/user/souchalay">Nearest Souchalay</a></li>
-          
-          <li><a href="/user/profile/view/<%=user_id%>">My profile</a></li>
+          <li><a href="/#">Newsletter</a></li>
 
         </ul>
       </nav><!-- .nav-menu -->
 
-      <a href="/user/logout" class="get-started-btn scrollto">Logout</a>
+      <a href="/user/register/no_ref" class="get-started-btn scrollto">Register</a>
 
     </div>
   </header><!-- End Header -->
@@ -111,24 +106,25 @@
       <div class="container">
 
         <div class="d-flex justify-content-between align-items-center">
-          <h2>Upload a Complaint</h2>
+          <h2>Log In Page</h2>
           <ol>
             <li><a href="/">Home</a></li>
-            <li>upload a complaint</li>
+            <li>Log in Page</li>
           </ol>
         </div>
 
       </div>
     </section><!-- End Breadcrumbs -->
 	
+
+    
+
+    
+
     <section class="inner-page">
       <div class="container">
         <p>
-        	<ul>
-      <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
-					      <h4 style="text-align:center;color:<%=color%>"><strong><%= error.message %></strong></h4>
-					      <% }) %> <% } %>
-					    </ul>
+        	
 
 	
 			<div class="limiter">
@@ -137,36 +133,24 @@
 					<div class="wrap-login100">
 
 
-						<form class="login100-form validate-form p-l-55 p-r-55 p-t-178" action="/user/complaints/post/<%=user_id%>"  method="POST" enctype="multipart/form-data">
+						<form class="login100-form validate-form p-l-55 p-r-55 p-t-178" action="/user/souchalay" method="POST">
 							<span class="login100-form-title">
-                Upload a Complaint  
-                <br>
-               (.jpg, .jpeg or .png format only)
-              </span>
-              
+								Find Nearest Souchalay
+							</span>
 
-							<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter the phone number" style="margin-top: 50px;">
-								<input type="file" name="complaint_image" />
+							<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter your pincode">
+								<input class="input100" type="text" name="pincode" id="pincode" placeholder="Pincode">
 								<span class="focus-input100"></span>
 							</div>
 
-							
-              <!-- <div class="container">
-                <form action="/user/complaints/post/<%=user_id%>" method="post" enctype="multipart/form-data">
-                  <input type="file" name="complaint_image" />
-                  <input type="submit" class="btn btn-success"/>
-                </form>
-              </div> -->
+							</div>
 
-							
-
-							<div class="container-login100-form-btn" style="margin-bottom: 45px;">
+							<div class="container-login100-form-btn">
 								<button class="login100-form-btn">
-									Upload
+									Enter
 								</button>
 							</div>
 
-							
 						</form>
 					</div>
 				</div>

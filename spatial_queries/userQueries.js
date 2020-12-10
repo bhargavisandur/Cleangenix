@@ -423,6 +423,66 @@ const acknowledgeComplaintResolution = async (req, res) => {
   }
 };
 
+const souchalay = async (req, res) => {
+  try {
+    let errors = [];
+    const {pincode } = req.body;
+    
+
+    //Find out the lat and long of the user from the pincode using the locationIQ API
+    const config = {
+      method: "get",
+      url: `https://us1.locationiq.com/v1/search.php?key=pk.9e8187ff3784e0e5cfef0fe6733bfd25&postalcode=${pincode}&format=json\n&limit=1&countrycodes=IN`,
+      headers: {
+        Cookie: "__cfduid=d87813cbe48abdce582fcd0f95df5d5331602794222",
+      },
+    };
+
+    const latlongRes = await axios(config);
+    // console.log(JSON.stringify(latlongRes.data));
+    const lat = latlongRes.data[0].lat;
+    const long = latlongRes.data[0].lon;
+    // console.log(typeof lat);
+    console.log(lat);
+    console.log(long);
+
+    /*const response = await pool.query(
+      "SELECT * FROM active_complaints WHERE ward_id=$1",
+      [ward_id]
+    );*/
+
+    const response = await pool.query(
+      "SELECT lat,long FROM latrine WHERE st_intersects(ST_MakePoint($1, $2),st_buffer(latrine.latrine_location,10000))",
+      [lat , long]
+    );
+
+    var latlongs = response.rows;
+
+    for (var i = 0; i < response.length; i++) 
+    {
+      console.log(response.rows[i].lat);
+      console.log("BYE");
+    }
+      
+      
+
+    res.render("souchalayMap", {
+        response: response,
+      } );
+
+    // console.log(JSON.stringify(response.rows));
+  } catch (err) {
+    if (err.response && err.response.status && err.response.status == "404") {
+      res.render("userRegister", {
+        errors: [{ message: "Please enter a valid pincode" }],
+      });
+    } else {
+      console.log(err);
+      res.status(500).json({ msg: "Internal Server error" });
+    }
+  }
+};
+
 module.exports = {
   userRegister,
   userLogin,
@@ -436,4 +496,5 @@ module.exports = {
   viewMyActiveComplaints,
   viewMyResolvedComplaints,
   acknowledgeComplaintResolution,
+  souchalay,
 };

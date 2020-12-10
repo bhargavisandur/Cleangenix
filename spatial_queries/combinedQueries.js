@@ -30,6 +30,8 @@ const viewMyResolvedComplaints = userQueries.viewMyResolvedComplaints;
 const acknowledgeComplaintResolution =
   userQueries.acknowledgeComplaintResolution;
 
+const souchalay = userQueries.souchalay;
+
 //Worker Queries
 
 module.exports = {
@@ -52,4 +54,5 @@ module.exports = {
   viewMyActiveComplaints,
   viewMyResolvedComplaints,
   acknowledgeComplaintResolution,
+  souchalay,
 };

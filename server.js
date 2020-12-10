@@ -178,6 +178,23 @@ passport.deserializeUser(function (user, done) {
 
 //******************end********************** */
 
+
+
+//Souchalay
+app.get("/user/souchalay", (req, res) => {
+  res.render("souchalay");
+});
+
+
+app.post("/user/souchalay", db.souchalay);
+
+app.get("/user/souchalay/:lat/:long", (req, res) => {
+  res.render("souchalayMap", {
+    lat: req.params.lat,
+    long: req.params.long,
+  });
+});
+
 //*****************complaint routes************* */
 
 // POST@ /user/complaints/post/:user_id

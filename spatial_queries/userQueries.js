@@ -8,6 +8,12 @@ const bcrypt = require("bcrypt");
 const axios = require("axios");
 const alert = require("alert");
 
+
+
+
+
+
+
 const gdQueries = require("../graph_queries/userQueries");
 const complaintQueries = require("../graph_queries/complaintQueries");
 
@@ -138,6 +144,11 @@ const userLogin = async (req, res) => {
   );
 };
 
+
+
+
+
+
 //POST@ /users/complaints/post/:user_id
 const postUserComplaintForm = async (req, res) => {
   try {
@@ -155,7 +166,20 @@ const postUserComplaintForm = async (req, res) => {
     } else if (req.errmessage) {
       errors.push({ message: req.errmessage });
       res.render("uploadComplaintForm", { errors, user_id, color: "red" });
-    } else {
+    } 
+    else {
+      console.log(req.file.filename)
+      boolTrash = await util.detectTrash(`../public/active_complaints/${req.file.filename}`)
+      //console.log("this is the type of ", typeof(boolTrash))
+      const trashOrNot= boolTrash.trim().charAt(boolTrash.trim().length-1);
+
+      if(trashOrNot==="0"){
+        errors.push({ message: "No trash detected" });
+        res.render("uploadComplaintForm", { errors, user_id, color: "red" });
+      }
+
+
+
       //get location from the photo
       console.log(req.file);
       const { filename, path } = req.file;

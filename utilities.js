@@ -5,6 +5,10 @@ var ExifImage = require("exif").ExifImage;
 var im = require("imagemagick");
 const pool = require("./pool");
 
+
+
+const path = require('path');
+
 const getCoordinatesFromPincode = (pincode) => {
   const options = {
     method: "GET",
@@ -83,9 +87,28 @@ const tempFunction = () => {
   return "abc";
 };
 
+
+const detectTrash = async (filename)=>{
+ try {
+        // console.log(__dirname);
+        // const image = path.join(
+        //     path.dirname(fs.realpathSync(__filename)),
+        //     `../public/active_complaints/${filename}`
+        // );
+        const { stdout, stderr } = await exec(
+            `cd Trash_Detection && python trashDetect.py --image ${filename}`
+        );
+        return stdout;
+    } catch (error) {
+        console.log(`Error: ${error}`);
+        return;
+    }
+}
+
 module.exports = {
   getCoordinatesFromPincode,
   tempFunction,
   getLocationFromPhoto,
   getBMC_ward,
+  detectTrash
 };

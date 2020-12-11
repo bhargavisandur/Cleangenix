@@ -8,12 +8,6 @@ const bcrypt = require("bcrypt");
 const axios = require("axios");
 const alert = require("alert");
 
-
-
-
-
-
-
 const gdQueries = require("../graph_queries/userQueries");
 const complaintQueries = require("../graph_queries/complaintQueries");
 
@@ -144,11 +138,6 @@ const userLogin = async (req, res) => {
   );
 };
 
-
-
-
-
-
 //POST@ /users/complaints/post/:user_id
 const postUserComplaintForm = async (req, res) => {
   try {
@@ -166,19 +155,19 @@ const postUserComplaintForm = async (req, res) => {
     } else if (req.errmessage) {
       errors.push({ message: req.errmessage });
       res.render("uploadComplaintForm", { errors, user_id, color: "red" });
-    } 
-    else {
-      console.log(req.file.filename)
-      boolTrash = await util.detectTrash(`../public/active_complaints/${req.file.filename}`)
-      //console.log("this is the type of ", typeof(boolTrash))
-      const trashOrNot= boolTrash.trim().charAt(boolTrash.trim().length-1);
+    } else {
+      console.log(req.file.filename);
 
-      if(trashOrNot==="0"){
-        errors.push({ message: "No trash detected" });
-        res.render("uploadComplaintForm", { errors, user_id, color: "red" });
-      }
+      //******************ML part*************************
 
+      // boolTrash = await util.detectTrash(`../public/active_complaints/${req.file.filename}`)
+      // //console.log("this is the type of ", typeof(boolTrash))
+      // const trashOrNot= boolTrash.trim().charAt(boolTrash.trim().length-1);
 
+      // if(trashOrNot==="0"){
+      //   errors.push({ message: "No trash detected" });
+      //   res.render("uploadComplaintForm", { errors, user_id, color: "red" });
+      // }
 
       //get location from the photo
       console.log(req.file);
@@ -426,8 +415,7 @@ const acknowledgeComplaintResolution = async (req, res) => {
 const souchalay = async (req, res) => {
   try {
     let errors = [];
-    const {pincode } = req.body;
-    
+    const { pincode } = req.body;
 
     //Find out the lat and long of the user from the pincode using the locationIQ API
     const config = {
@@ -453,22 +441,19 @@ const souchalay = async (req, res) => {
 
     const response = await pool.query(
       "SELECT lat,long FROM latrine WHERE st_intersects(ST_MakePoint($1, $2),st_buffer(latrine.latrine_location,10000))",
-      [lat , long]
+      [lat, long]
     );
 
     var latlongs = response.rows;
 
-    for (var i = 0; i < response.length; i++) 
-    {
+    for (var i = 0; i < response.length; i++) {
       console.log(response.rows[i].lat);
       console.log("BYE");
     }
-      
-      
 
     res.render("souchalayMap", {
-        response: response,
-      } );
+      response: response,
+    });
 
     // console.log(JSON.stringify(response.rows));
   } catch (err) {
